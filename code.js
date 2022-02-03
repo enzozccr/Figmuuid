@@ -12,12 +12,8 @@ figma.ui.onmessage = msg => {
     // One way of distinguishing between different types of messages sent from
     // your HTML page is to use an object with a "type" property like this.
     if (msg.type === 'generate-uid') {
-        //const random = Math.floor(Math.random() * 1000);
-        const types = [
-            "FRAME"
-        ];
         //const acronym = figma.currentPage.name.substring(0,6);
-        const uuidkey = 'SEWAN_UID: ';
+        const uuidkey = 'FUN_';
         // UUID generation formula
         function generateUUID() {
             var d = new Date().getTime(); //Timestamp
