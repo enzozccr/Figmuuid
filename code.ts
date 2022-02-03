@@ -15,38 +15,51 @@ figma.ui.onmessage = msg => {
     // your HTML page is to use an object with a "type" property like this.
     if (msg.type === 'generate-uid') {
 
-        //const acronym = figma.currentPage.name.substring(0,6);
-        const uuidkey= 'FUN_';
+      // UUID generation formula
+      function generateUUID() { // Public Domain/MIT
+        var d = new Date().getTime();//Timestamp
+        var d2 = ((typeof performance !== "undefined") && performance.now && (performance.now() * 1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+          var r = Math.random() * 16;//random number between 0 and 16
+          if (d > 0) {//Use timestamp until depleted
+            r = (d + r) % 16 | 0;
+            d = Math.floor(d / 16);
+          } else {//Use microseconds since page-load if supported
+            r = (d2 + r) % 16 | 0;
+            d2 = Math.floor(d2 / 16);
+          }
+          return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+      }
 
-        // UUID generation formula
-        function generateUUID() { // Public Domain/MIT
-          var d = new Date().getTime();//Timestamp
-          var d2 = ((typeof performance !== "undefined") && performance.now && (performance.now() * 1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
-          return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16;//random number between 0 and 16
-            if (d > 0) {//Use timestamp until depleted
-              r = (d + r) % 16 | 0;
-              d = Math.floor(d / 16);
-            } else {//Use microseconds since page-load if supported
-              r = (d2 + r) % 16 | 0;
-              d2 = Math.floor(d2 / 16);
-            }
-            return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
-          });
-        }
+      // Rename selected frames
+      const uuidkey= 'FUN_';
+      const selection = figma.currentPage.selection;
 
-        // Rename selected frames
+      //const generate = document.getElementById("generate");
+
+      if (selection.length > 0) {
         
-          for (const node of figma.currentPage.selection) {
-            if ("name" in node) {
-                node.name = uuidkey + generateUUID()
-            }
-          };
- 
+        //generate.disabled = false;
+
+        for (const node of selection) {
+          if ("name" in node) {
+              node.name = uuidkey + generateUUID()
+          }
+        };
+
+      } else {
+        //generate.disabled = true;
+        figma.notify("No frame selected", { timeout: 1500,});
+      }
     }
 
     if (msg.type === 'cancel') {
       figma.closePlugin();
     }
+
+    // if (msg.type === 'isSelected') {
+    //   figma.ui.postMessage(figma.currentPage.selection.length !== 0);
+    // }
     
 };

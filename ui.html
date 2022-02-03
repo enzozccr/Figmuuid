@@ -18,46 +18,74 @@
     margin: 16px !important;
   }
 
-  .btn-primary {
-    outline: 0;
-    border: 0;
-    font-size: 11px;
-    color: white;
-    font-weight: 500;
-    width: 100%;
-    background-color: var(--main-blue);
+  .content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .btn {
+    display: inline-block;
     height: 32px;
     border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    outline: 0;
+    padding: 0 12px;
+  }
+
+  .btn-primary {
+    border: 0;
+    color: white;
+    width: 100%;
+    background-color: var(--main-blue);
+  }
+
+  .btn-primary[disabled] {
+      background-color: var(--light-grey);
   }
 
   .btn-terciary {
-    outline: 0;
-    border: 0;
-    font-size: 11px;
-    color: var(--light-grey);
-    font-weight: 500;
-    width: 100%;
+    border: solid 1px var(--almost-black);
+    color: var(--almost-black);
     background-color: transparent;
-    height: 32px;
-    border-radius: 6px;
-    margin-top: 4px;
+    margin-right: 8px;
+  }
+
+  .btn-container {
+    display: flex;
+    flex-direction: row;
   }
 
   p {
     font-size: 11px;
     line-height: 16px;
-    margin-bottom: 72px;
+    margin-bottom: 8px;
+  }
+
+  .bold {
+    font-weight: 600;
   }
 
 </style>
 
-<p>This will generate an unique id for the selected frame.</p>
-<div class="btn-container">
-  <button id="generate" class="btn-primary">Generate</button>
-  <button id="cancel" class="btn-terciary">Cancel</button>
+<div class="content">
+  <div>
+    <p class="bold">Select frames</p>
+    <p>Select frames and click "Generate". This will generate an unique id for every selected frames.</p>
+  </div>
+  <div class="btn-container">
+    <button id="cancel" class="btn btn-terciary">Cancel</button>
+    <button id="generate" class="btn btn-primary">Generate</button>
+  </div>
 </div>
 
 <script>
+// parent.postMessage({ pluginMessage: { type: 'isSelected'}}, '*')
+// onmessage = (event) => {
+//   console.log("got this from the plugin code", event.data.pluginMessage)
+// }
 
 document.getElementById('generate').onclick = () => {
   parent.postMessage({ pluginMessage: { type: 'generate-uid'}}, '*')
@@ -66,5 +94,7 @@ document.getElementById('generate').onclick = () => {
 document.getElementById('cancel').onclick = () => {
   parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
 }
+
+
 
 </script>

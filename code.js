@@ -12,8 +12,6 @@ figma.ui.onmessage = msg => {
     // One way of distinguishing between different types of messages sent from
     // your HTML page is to use an object with a "type" property like this.
     if (msg.type === 'generate-uid') {
-        //const acronym = figma.currentPage.name.substring(0,6);
-        const uuidkey = 'FUN_';
         // UUID generation formula
         function generateUUID() {
             var d = new Date().getTime(); //Timestamp
@@ -32,14 +30,27 @@ figma.ui.onmessage = msg => {
             });
         }
         // Rename selected frames
-        for (const node of figma.currentPage.selection) {
-            if ("name" in node) {
-                node.name = uuidkey + generateUUID();
+        const uuidkey = 'FUN_';
+        const selection = figma.currentPage.selection;
+        //const generate = document.getElementById("generate");
+        if (selection.length > 0) {
+            //generate.disabled = false;
+            for (const node of selection) {
+                if ("name" in node) {
+                    node.name = uuidkey + generateUUID();
+                }
             }
+            ;
         }
-        ;
+        else {
+            //generate.disabled = true;
+            figma.notify("No frame selected", { timeout: 1500, });
+        }
     }
     if (msg.type === 'cancel') {
         figma.closePlugin();
     }
+    // if (msg.type === 'isSelected') {
+    //   figma.ui.postMessage(figma.currentPage.selection.length !== 0);
+    // }
 };
