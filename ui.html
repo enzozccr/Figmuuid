@@ -82,19 +82,21 @@
 </div>
 
 <script>
-// parent.postMessage({ pluginMessage: { type: 'isSelected'}}, '*')
-// onmessage = (event) => {
-//   console.log("got this from the plugin code", event.data.pluginMessage)
-// }
+  // Call the function to initialize the Generate button state
+  parent.postMessage({ pluginMessage: { type: 'elementsSelected' } }, '*')
 
-document.getElementById('generate').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'generate-uid'}}, '*')
-}
+  onmessage = (event) => {
+    const msg = event.data.pluginMessage.pluginMessage;
+    if (msg.type === 'elementsSelected') {
+      document.getElementById("generate").disabled = !msg.value
+    }
+  }
 
-document.getElementById('cancel').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
-}
+  document.getElementById('generate').onclick = () => {
+    parent.postMessage({ pluginMessage: { type: 'generate-uid' } }, '*')
+  }
 
-
-
+  document.getElementById('cancel').onclick = () => {
+    parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
+  }
 </script>

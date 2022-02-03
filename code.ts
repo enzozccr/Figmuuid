@@ -1,65 +1,55 @@
-// This plugin will open a window to prompt the user to enter a number, and
-// it will then create that many rectangles on the screen.
-// This file holds the main code for the plugins. It has access to the *document*.
-// You can access browser APIs in the <script> tag inside "ui.html" which has a
-// full browser environment (see documentation).
-// This shows the HTML page in "ui.html".
-
 figma.showUI(__html__);
-// Calls to "parent.postMessage" from within the HTML page will trigger this
-// callback. The callback will be passed the "pluginMessage" property of the
-// posted message.
+
+function uuidv4() {
+  var d = new Date().getTime();
+  var d2 = ((typeof performance !== "undefined") && performance.now && (performance.now() * 1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    var r = Math.random() * 16;
+    if (d > 0) {
+      r = (d + r) % 16 | 0;
+      d = Math.floor(d / 16);
+    } else {
+      r = (d2 + r) % 16 | 0;
+      d2 = Math.floor(d2 / 16);
+    }
+    return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+
+function isFrameSelected() {
+  let containsFrameNode: boolean = false;
+  for (const node of figma.currentPage.selection) {
+    containsFrameNode = node.type === 'FRAME';
+    if (containsFrameNode) {
+      break;
+    }
+  }
+  return containsFrameNode;
+}
 
 figma.ui.onmessage = msg => {
-    // One way of distinguishing between different types of messages sent from
-    // your HTML page is to use an object with a "type" property like this.
-    if (msg.type === 'generate-uid') {
+  if (msg.type === 'generate-uid') {
+    const uuidkey = 'FUN_';
+    const selection = figma.currentPage.selection;
 
-      // UUID generation formula
-      function generateUUID() { // Public Domain/MIT
-        var d = new Date().getTime();//Timestamp
-        var d2 = ((typeof performance !== "undefined") && performance.now && (performance.now() * 1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
-        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-          var r = Math.random() * 16;//random number between 0 and 16
-          if (d > 0) {//Use timestamp until depleted
-            r = (d + r) % 16 | 0;
-            d = Math.floor(d / 16);
-          } else {//Use microseconds since page-load if supported
-            r = (d2 + r) % 16 | 0;
-            d2 = Math.floor(d2 / 16);
-          }
-          return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
-        });
-      }
-
-      // Rename selected frames
-      const uuidkey= 'FUN_';
-      const selection = figma.currentPage.selection;
-
-      //const generate = document.getElementById("generate");
-
-      if (selection.length > 0) {
-        
-        //generate.disabled = false;
-
-        for (const node of selection) {
-          if ("name" in node) {
-              node.name = uuidkey + generateUUID()
-          }
-        };
-
-      } else {
-        //generate.disabled = true;
-        figma.notify("No frame selected", { timeout: 1500,});
-      }
+    if (selection.length > 0) {
+      for (const node of selection) {
+        if ("name" in node) {
+          node.name = uuidkey + uuidv4()
+        }
+      };
+    } else {
+      figma.notify("No frame selected", { timeout: 1500, });
     }
-
-    if (msg.type === 'cancel') {
-      figma.closePlugin();
-    }
-
-    // if (msg.type === 'isSelected') {
-    //   figma.ui.postMessage(figma.currentPage.selection.length !== 0);
-    // }
-    
+  }
+  else if (msg.type === 'cancel') {
+    figma.closePlugin();
+  }
+  else if (msg.type === 'elementsSelected') {
+    figma.ui.postMessage({ pluginMessage: { type: 'elementsSelected', value: isFrameSelected() } });
+  }
 };
+
+figma.on("selectionchange", () => {
+  figma.ui.postMessage({ pluginMessage: { type: 'elementsSelected', value: isFrameSelected() } });
+})
