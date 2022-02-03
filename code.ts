@@ -29,12 +29,11 @@ function isFrameSelected() {
 
 figma.ui.onmessage = msg => {
   if (msg.type === 'generate-uid') {
-    const uuidkey = 'FUN_';
     const selection = figma.currentPage.selection;
 
     for (const node of selection) {
       if ("name" in node && node.type === 'FRAME') {
-        node.name = uuidkey + uuidv4()
+        node.name = msg.prefix + uuidv4() + msg.suffix
       }
     };
     figma.notify(selection.length + " frames renamed", {

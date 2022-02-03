@@ -5,6 +5,7 @@
     --main-blue: #18A0FB;
     --almost-black: #333;
     --light-grey: #B3B3B3;
+    --lighter-grey: #DADADA;
   }
 
   * {
@@ -68,12 +69,66 @@
     font-weight: 600;
   }
 
+  .inputs {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .input-group {
+    position: relative;
+    margin-top: 16px;
+    width: calc(50% - 4px);
+  }
+
+  .input {
+    height: 32px;
+    border: solid 1px var(--lighter-grey);
+    font-size: 11px;
+    border-radius: 2px;
+    padding: 0 8px 0 56px;
+    width: 100%;
+    
+  }
+  
+  .input-group span {
+    position: absolute;
+    display: block;
+    z-index: 50;
+    left: 12px;
+    font-size: 11px;
+    color: var(--light-grey);
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .input:focus {
+    border: solid 2px var(--main-blue);
+    border-radius: 2px;
+    outline: 0;
+  }
+
+  .input::placeholder {
+    color: var(--light-grey);
+  }
+
 </style>
 
 <div class="content">
   <div>
     <p class="bold">Select frames</p>
     <p>Select frames and click "Generate". This will generate an unique id for every selected frames.</p>
+    <div class="inputs">
+      <div class="input-group">
+        <input id="prefix" class="input" />
+        <span>Prefix :</span>
+      </div>
+      <div class="input-group">
+        <input id="suffix" class="input" />
+        <span>Suffix :</span>
+      </div>
+    </div>
   </div>
   <div class="btn-container">
     <button id="cancel" class="btn btn-terciary">Cancel</button>
@@ -93,10 +148,15 @@
   }
 
   document.getElementById('generate').onclick = () => {
-    parent.postMessage({ pluginMessage: { type: 'generate-uid' } }, '*')
+    parent.postMessage({ pluginMessage: { 
+      type: 'generate-uid', 
+      prefix: document.getElementById('prefix').value,
+      suffix: document.getElementById('suffix').value 
+    }}, '*')
   }
 
   document.getElementById('cancel').onclick = () => {
     parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
   }
+  
 </script>
