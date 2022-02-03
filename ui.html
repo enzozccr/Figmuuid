@@ -44,7 +44,7 @@
   }
 
   .btn-primary[disabled] {
-      background-color: var(--light-grey);
+    background-color: var(--light-grey);
   }
 
   .btn-terciary {
@@ -88,9 +88,9 @@
     border-radius: 2px;
     padding: 0 8px 0 56px;
     width: 100%;
-    
+
   }
-  
+
   .input-group span {
     position: absolute;
     display: block;
@@ -113,7 +113,6 @@
   .input::placeholder {
     color: var(--light-grey);
   }
-
 </style>
 
 <div class="content">
@@ -140,24 +139,36 @@
 <script>
   // Call the function to initialize the Generate button state
   parent.postMessage({ pluginMessage: { type: 'elementsSelected' } }, '*')
+  // Call the function to initialize the prefix and the suffix
+  parent.postMessage({ pluginMessage: { type: 'currentPrefix' } }, '*')
+  parent.postMessage({ pluginMessage: { type: 'currentSuffix' } }, '*')
 
   onmessage = (event) => {
     const msg = event.data.pluginMessage.pluginMessage;
+
     if (msg.type === 'elementsSelected') {
       document.getElementById("generate").disabled = !msg.value
+    }
+    else if (msg.type === 'currentPrefix') {
+      document.getElementById("prefix").value = msg.value
+    }
+    else if (msg.type === 'currentSuffix') {
+      document.getElementById("suffix").value = msg.value
     }
   }
 
   document.getElementById('generate').onclick = () => {
-    parent.postMessage({ pluginMessage: { 
-      type: 'generate-uid', 
-      prefix: document.getElementById('prefix').value,
-      suffix: document.getElementById('suffix').value 
-    }}, '*')
+    parent.postMessage({
+      pluginMessage: {
+        type: 'generate-uid',
+        prefix: document.getElementById('prefix').value,
+        suffix: document.getElementById('suffix').value
+      }
+    }, '*')
   }
 
   document.getElementById('cancel').onclick = () => {
     parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
   }
-  
+
 </script>

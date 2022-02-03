@@ -31,6 +31,11 @@ figma.ui.onmessage = msg => {
   if (msg.type === 'generate-uid') {
     const selection = figma.currentPage.selection;
 
+    // Store in the clientStorage, the prefix & suffix
+    figma.clientStorage.setAsync('uuidPrefix', msg.prefix);
+    figma.clientStorage.setAsync('uuidSuffix', msg.suffix);
+
+    // Rename name(s) of frame(s)
     for (const node of selection) {
       if ("name" in node && node.type === 'FRAME') {
         node.name = msg.prefix + uuidv4() + msg.suffix
@@ -45,6 +50,30 @@ figma.ui.onmessage = msg => {
   }
   else if (msg.type === 'elementsSelected') {
     figma.ui.postMessage({ pluginMessage: { type: 'elementsSelected', value: isFrameSelected() } });
+  }
+  else if (msg.type === 'currentPrefix') {
+    figma.clientStorage.getAsync("uuidPrefix").then(result => {
+      if (result) {
+        figma.ui.postMessage({
+          pluginMessage: {
+            type: 'currentPrefix',
+            value: result
+          }
+        });
+      }
+    });
+  }
+  else if (msg.type === 'currentSuffix') {
+    figma.clientStorage.getAsync("uuidSuffix").then(result => {
+      if (result) {
+        figma.ui.postMessage({
+          pluginMessage: {
+            type: 'currentSuffix',
+            value: result
+          }
+        });
+      }
+    });
   }
 };
 
