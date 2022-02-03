@@ -1,6 +1,62 @@
-<h2>Figmuuid</h2>
-<button id="generate">Generate</button>
-<button id="cancel">Cancel</button>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --main-blue: #18A0FB;
+    --almost-black: #333;
+    --light-grey: #B3B3B3;
+  }
+
+  * {
+    font-family: 'Inter', sans-serif;
+    color: var(--almost-black);
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    margin: 16px !important;
+  }
+
+  .btn-primary {
+    outline: 0;
+    border: 0;
+    font-size: 11px;
+    color: white;
+    font-weight: 500;
+    width: 100%;
+    background-color: var(--main-blue);
+    height: 32px;
+    border-radius: 6px;
+  }
+
+  .btn-terciary {
+    outline: 0;
+    border: 0;
+    font-size: 11px;
+    color: var(--light-grey);
+    font-weight: 500;
+    width: 100%;
+    background-color: transparent;
+    height: 32px;
+    border-radius: 6px;
+    margin-top: 4px;
+  }
+
+  p {
+    font-size: 11px;
+    line-height: 16px;
+    margin-bottom: 16px;
+  }
+
+</style>
+
+<p>This will generate an unique id for the selected frame.</p>
+<div class="btn-container">
+  <button id="generate" class="btn-primary">Generate</button>
+  <button id="cancel" class="btn-terciary">Cancel</button>
+</div>
+
 <script>
 
 document.getElementById('generate').onclick = () => {
