@@ -29,17 +29,15 @@ figma.ui.onmessage = msg => {
     if (msg.type === 'generate-uid') {
         const uuidkey = 'FUN_';
         const selection = figma.currentPage.selection;
-        if (selection.length > 0) {
-            for (const node of selection) {
-                if ("name" in node) {
-                    node.name = uuidkey + uuidv4();
-                }
+        for (const node of selection) {
+            if ("name" in node && node.type === 'FRAME') {
+                node.name = uuidkey + uuidv4();
             }
-            ;
         }
-        else {
-            figma.notify("No frame selected", { timeout: 1500, });
-        }
+        ;
+        figma.notify(selection.length + " frames renamed", {
+            timeout: 500,
+        });
     }
     else if (msg.type === 'cancel') {
         figma.closePlugin();
