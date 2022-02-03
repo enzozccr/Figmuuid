@@ -14,7 +14,7 @@ figma.ui.onmessage = msg => {
     // One way of distinguishing between different types of messages sent from
     // your HTML page is to use an object with a "type" property like this.
     if (msg.type === 'generate-uid') {
-      
+
         //const acronym = figma.currentPage.name.substring(0,6);
         const uuidkey= 'FUN_';
 
@@ -45,7 +45,8 @@ figma.ui.onmessage = msg => {
  
     }
 
-    // Make sure to close the plugin when you're done. Otherwise the plugin will
-    // keep running, which shows the cancel button at the bottom of the screen.
-    figma.closePlugin();
+    if (msg.type === 'cancel') {
+      figma.closePlugin();
+    }
+    
 };
