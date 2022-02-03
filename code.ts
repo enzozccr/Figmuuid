@@ -45,9 +45,7 @@ figma.ui.onmessage = msg => {
       timeout: 500,
     });
   }
-  else if (msg.type === 'cancel') {
-    figma.closePlugin();
-  }
+
   else if (msg.type === 'elementsSelected') {
     figma.ui.postMessage({ pluginMessage: { type: 'elementsSelected', value: isFrameSelected() } });
   }
