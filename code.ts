@@ -27,25 +27,24 @@ function isFrameSelected() {
   return containsFrameNode;
 }
 
-figma.ui.onmessage = msg => {
+figma.ui.onmessage = async (msg) => {
   if (msg.type === 'generate-uid') {
     const selection = figma.currentPage.selection;
 
-    // Store in the clientStorage, the prefix & suffix
-    figma.clientStorage.setAsync('uuidPrefix', msg.prefix);
-    figma.clientStorage.setAsync('uuidSuffix', msg.suffix);
+    // Retrieves prefix and suffix from clientStorage
+    const prefix = await figma.clientStorage.getAsync('uuidPrefix');
+    const suffix = await figma.clientStorage.getAsync('uuidSuffix');
 
     // Rename name(s) of frame(s)
     for (const node of selection) {
       if ("name" in node && node.type === 'FRAME') {
-        node.name = msg.prefix + uuidv4() + msg.suffix
+        node.name = prefix + uuidv4() + suffix
       }
     };
     figma.notify(selection.length + " frames renamed", {
       timeout: 500,
     });
   }
-
   else if (msg.type === 'elementsSelected') {
     figma.ui.postMessage({ pluginMessage: { type: 'elementsSelected', value: isFrameSelected() } });
   }
@@ -72,6 +71,20 @@ figma.ui.onmessage = msg => {
         });
       }
     });
+  }
+  else if (msg.type === 'set-prefix') {
+    const prefix = await figma.clientStorage.getAsync('uuidPrefix');
+    if (prefix !== msg.value) {
+      await figma.clientStorage.setAsync('uuidPrefix', msg.value);
+      figma.notify("Prefix saved!", { timeout: 500, });
+    }
+  }
+  else if (msg.type === 'set-suffix') {
+    const suffix = await figma.clientStorage.getAsync('uuidSuffix');
+    if (suffix !== msg.value) {
+      await figma.clientStorage.setAsync('uuidSuffix', msg.value);
+      figma.notify("Suffix saved!", { timeout: 500, });
+    }
   }
 };
 

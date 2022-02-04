@@ -116,16 +116,18 @@
 <div class="content">
   <div class="top">
     <p class="bold">Select frames</p>
-    <p>Select frames, add (optional) prefix and/or suffix and click "<span class="bold">Generate</span>". This will generate an <span class="bold">unique id</span> (using <a href="https://datatracker.ietf.org/doc/html/rfc4122" target="_blank">uuidv4</a>) for every selected frames.</p>
+    <p>Select frames, add (optional) prefix and/or suffix and click "<span class="bold">Generate</span>". This will
+      generate an <span class="bold">unique id</span> (using <a href="https://datatracker.ietf.org/doc/html/rfc4122"
+        target="_blank">uuidv4</a>) for every selected frames.</p>
   </div>
   <div class="bot">
     <div class="inputs">
       <div class="input-group">
-        <input id="prefix" class="input" />
+        <input id="prefix" class="input" onfocusout="setPrefix()" />
         <span>Prefix:</span>
       </div>
       <div class="input-group">
-        <input id="suffix" class="input" />
+        <input id="suffix" class="input" onfocusout="setSuffix()" />
         <span>Suffix:</span>
       </div>
     </div>
@@ -155,13 +157,14 @@
   }
 
   document.getElementById('generate').onclick = () => {
-    parent.postMessage({
-      pluginMessage: {
-        type: 'generate-uid',
-        prefix: document.getElementById('prefix').value,
-        suffix: document.getElementById('suffix').value
-      }
-    }, '*')
+    parent.postMessage({ pluginMessage: { type: 'generate-uid' } }, '*')
   }
 
+  function setPrefix() {
+    parent.postMessage({ pluginMessage: { type: 'set-prefix', value: document.getElementById('prefix').value } }, '*')
+  }
+
+  function setSuffix() {
+    parent.postMessage({ pluginMessage: { type: 'set-suffix', value: document.getElementById('suffix').value } }, '*')
+  }
 </script>

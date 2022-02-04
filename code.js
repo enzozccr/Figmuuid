@@ -1,3 +1,12 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 figma.showUI(__html__);
 function uuidv4() {
     var d = new Date().getTime();
@@ -25,16 +34,16 @@ function isFrameSelected() {
     }
     return containsFrameNode;
 }
-figma.ui.onmessage = msg => {
+figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
     if (msg.type === 'generate-uid') {
         const selection = figma.currentPage.selection;
-        // Store in the clientStorage, the prefix & suffix
-        figma.clientStorage.setAsync('uuidPrefix', msg.prefix);
-        figma.clientStorage.setAsync('uuidSuffix', msg.suffix);
+        // Retrieves prefix and suffix from clientStorage
+        const prefix = yield figma.clientStorage.getAsync('uuidPrefix');
+        const suffix = yield figma.clientStorage.getAsync('uuidSuffix');
         // Rename name(s) of frame(s)
         for (const node of selection) {
             if ("name" in node && node.type === 'FRAME') {
-                node.name = msg.prefix + uuidv4() + msg.suffix;
+                node.name = prefix + uuidv4() + suffix;
             }
         }
         ;
@@ -69,7 +78,21 @@ figma.ui.onmessage = msg => {
             }
         });
     }
-};
+    else if (msg.type === 'set-prefix') {
+        const prefix = yield figma.clientStorage.getAsync('uuidPrefix');
+        if (prefix !== msg.value) {
+            yield figma.clientStorage.setAsync('uuidPrefix', msg.value);
+            figma.notify("Prefix saved!", { timeout: 500, });
+        }
+    }
+    else if (msg.type === 'set-suffix') {
+        const suffix = yield figma.clientStorage.getAsync('uuidSuffix');
+        if (suffix !== msg.value) {
+            yield figma.clientStorage.setAsync('uuidSuffix', msg.value);
+            figma.notify("Suffix saved!", { timeout: 500, });
+        }
+    }
+});
 figma.on("selectionchange", () => {
     figma.ui.postMessage({ pluginMessage: { type: 'elementsSelected', value: isFrameSelected() } });
 });
